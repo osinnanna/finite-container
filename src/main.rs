@@ -1,10 +1,20 @@
+use actix_web::{web, App, HttpServer};
+
+mod handlers;
 mod utils;
 
-fn main() {
-    println!("Hello, world!");
-    const CODE_LENGTH: usize = 8;
-    
-    let code = utils::generate_code(CODE_LENGTH);
+const PORT: u16 = 3000;
 
-    println!("Your code is {}", code);
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    println!("Server running at http://localhost:{}", PORT);
+
+    HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(handlers::hello))
+            .route("/code", web::get().to(handlers::get_code))
+    })
+    .bind(("127.0.0.1", PORT))?
+    .run()
+    .await
 }
